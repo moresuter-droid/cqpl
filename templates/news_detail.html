@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <link rel="manifest" href="/static/manifest.json">
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/static/sw.js");}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ article.title }} - CQPL</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial; background: #0a0e17; color: #fff; }
+        .header { background: linear-gradient(135deg, #0d1b2a, #1b2838); padding: 20px; text-align: center; border-bottom: 4px solid #00a8ff; }
+        .header a { color: #00a8ff; text-decoration: none; font-size: 14px; }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px 15px; }
+        .article { background: #111827; border-radius: 12px; border: 1px solid #1f2937; padding: 25px; }
+        .article-date { color: #888; font-size: 13px; margin-bottom: 10px; }
+        .article-title { font-size: 24px; font-weight: 800; margin-bottom: 15px; line-height: 1.3; }
+        .article-cat { display: inline-block; background: #00a8ff; color: #fff; padding: 4px 12px; border-radius: 15px; font-size: 12px; margin-bottom: 20px; }
+        .article-content { color: #ccc; font-size: 15px; line-height: 1.7; }
+        .other-news { margin-top: 25px; }
+        .other-news h3 { color: #888; margin-bottom: 12px; font-size: 16px; }
+        .other-item { background: #111827; border-radius: 10px; border: 1px solid #1f2937; padding: 15px; margin-bottom: 10px; }
+        .other-item a { color: #fff; text-decoration: none; font-weight: 600; }
+        .other-item a:hover { color: #00a8ff; }
+        .other-date { color: #888; font-size: 11px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="/news">← Барлық жаңалықтар</a>
+    </div>
+    <div class="container">
+        <div class="article">
+            <div class="article-date">{{ article.created_date }}</div>
+            <h1 class="article-title">{{ article.title }}</h1>
+            <span class="article-cat">{{ article.category }}</span>
+            <div class="article-content">{{ article.content }}</div>
+        </div>
+        
+        {% if other_news|length > 0 %}
+        <div class="other-news">
+            <h3>Басқа жаңалықтар</h3>
+            {% for n in other_news %}
+            <div class="other-item">
+                <div class="other-date">{{ n.created_date }}</div>
+                <a href="/news/{{ n.id }}">{{ n.title }}</a>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

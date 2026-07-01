@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CQPL — Cyber Qazaqstan Premier League</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
+        * { margin:0; padding:0; box-sizing:border-box; }
+        :root { --bg:#020510; --card:rgba(12,16,30,0.85); --blue:#1a56ff; --gold:#f0b90b; --red:#ff2d55; --green:#00d68f; --text:#f0f0f5; --text2:#7e8299; }
+        body { font-family:'Montserrat',sans-serif; background:var(--bg); color:var(--text); }
+        .header { background:linear-gradient(180deg,rgba(10,20,50,0.95),rgba(5,10,30,0.95)); padding:25px; text-align:center; border-bottom:2px solid rgba(26,86,255,0.3); }
+        .header h1 { font-size:40px; font-weight:900; background:linear-gradient(180deg,#fff,#6b8cff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+        .nav { display:flex; justify-content:center; gap:4px; padding:12px; background:rgba(0,0,0,0.5); flex-wrap:wrap; }
+        .nav a { color:var(--text2); text-decoration:none; padding:10px 16px; border-radius:12px; font-size:11px; font-weight:600; }
+        .nav a:hover,.nav a.active { background:var(--blue); color:#fff; }
+        .container { max-width:1100px; margin:0 auto; padding:20px; }
+        .card { background:var(--card); border-radius:16px; border:1px solid rgba(255,255,255,0.04); overflow:hidden; margin-bottom:16px; }
+        .card-head { padding:16px 20px; font-weight:700; font-size:14px; border-bottom:1px solid rgba(255,255,255,0.04); }
+        .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+        @media(max-width:800px){ .grid-2{grid-template-columns:1fr;} }
+        table { width:100%; border-collapse:collapse; }
+        th { color:var(--text2); font-size:9px; font-weight:700; letter-spacing:2px; padding:12px 8px; text-align:center; text-transform:uppercase; }
+        td { padding:10px 8px; text-align:center; font-size:13px; border-bottom:1px solid rgba(255,255,255,0.02); }
+        tr:hover td { background:rgba(26,86,255,0.04); }
+        .team-cell { text-align:left; }
+        .team-cell a { color:#fff; text-decoration:none; font-weight:600; }
+        .pts { font-weight:800; color:var(--blue); }
+        .chart-wrap { padding:15px; }
+        canvas { max-height:200px; }
+        .news-item { padding:14px 20px; border-bottom:1px solid rgba(255,255,255,0.02); cursor:pointer; }
+        .news-item:hover { background:rgba(255,255,255,0.02); }
+        .news-date { font-size:10px; color:var(--text2); }
+        .news-title { font-weight:600; font-size:13px; margin:4px 0; }
+        .news-title a { color:#fff; text-decoration:none; }
+        .badge { display:inline-block; padding:3px 8px; border-radius:20px; font-size:9px; background:rgba(26,86,255,0.15); color:var(--blue); }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>CQPL</h1>
+        <p style="color:var(--gold);letter-spacing:4px;font-size:13px;">CYBER QAZAQSTAN PREMIER LEAGUE</p>
+    </div>
+    <div class="nav">
+        <a href="/" class="active">Кесте</a>
+        <a href="/calendar">Календарь</a>
+        <a href="/scorers">Бомбардирлер</a>
+        <a href="/assists">Ассистенттер</a>
+        <a href="/cards">Карточкалар</a>
+        <a href="/transfers">Трансферлер</a>
+        <a href="/news">Жаңалықтар</a>
+        <a href="/team-of-week">Команда тура</a>
+        <a href="/about">Лига туралы</a>
+    </div>
+    <div class="container">
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-head">📊 Турнир кестесі</div>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead><tr><th>#</th><th>Команда</th><th>О</th><th>И</th><th>В</th></tr></thead>
+                        <tbody>
+                            {% for team in teams %}
+                            <tr>
+                                <td><span style="display:inline-block;width:24px;height:24px;border-radius:6px;background:{% if loop.index==1 %}var(--blue){% elif loop.index==2 %}rgba(26,86,255,0.7){% elif loop.index==3 %}var(--gold){% else %}rgba(255,255,255,0.05){% endif %};color:{% if loop.index<=3 %}#fff{% else %}var(--text2){% endif %};line-height:24px;font-weight:700;font-size:11px;">{{ loop.index }}</span></td>
+                                <td class="team-cell"><a href="/team/{{ team.id }}">{{ team.name }}</a></td>
+                                <td class="pts">{{ team.points }}</td>
+                                <td>{{ team.games }}</td>
+                                <td>{{ team.wins }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-head">📈 Ұпайлар графигі</div>
+                <div class="chart-wrap">
+                    <canvas id="pointsChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-head">📰 Жаңалықтар <a href="/news" style="color:var(--blue);text-decoration:none;font-size:11px;margin-left:auto;">Барлығы →</a></div>
+            {% for n in news %}
+            <div class="news-item" onclick="location.href='/news/{{ n.id }}'">
+                <div class="news-date">{{ n.created_date }}</div>
+                <div class="news-title"><a href="/news/{{ n.id }}">{{ n.title }}</a></div>
+                <span class="badge">{{ n.category }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <script>
+        const ctx = document.getElementById('pointsChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: [{% for t in teams %}'{{ t.name }}'{% if not loop.last %},{% endif %}{% endfor %}],
+                datasets: [{
+                    label: 'Ұпай',
+                    data: [{% for t in teams %}{{ t.points }}{% if not loop.last %},{% endif %}{% endfor %}],
+                    backgroundColor: ['#1a56ff','#1a56ff','#f0b90b','#1a56ff','#1a56ff','#1a56ff','#1a56ff','#ff2d55','#ff2d55','#ff2d55'],
+                    borderRadius: 6,
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#7e8299' } },
+                    x: { ticks: { color: '#7e8299', font: { size: 9 } } }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

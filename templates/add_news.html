@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <link rel="manifest" href="/static/manifest.json">
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/static/sw.js");}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Жаңалық қосу - CQPL</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial; background: #0a0e17; color: #fff; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        .form-card { background: #111827; border-radius: 16px; padding: 25px; border: 1px solid #1f2937; width: 90%; max-width: 500px; }
+        .form-card h2 { color: #e63946; margin-bottom: 20px; text-align: center; }
+        input, textarea, select { width: 100%; padding: 12px; margin-bottom: 12px; background: #0a0e17; border: 2px solid #1f2937; color: #fff; border-radius: 8px; font-size: 15px; font-family: 'Segoe UI', Arial; }
+        textarea { height: 150px; resize: vertical; }
+        input:focus, textarea:focus, select:focus { border-color: #e63946; outline: none; }
+        button { width: 100%; padding: 12px; background: #e63946; color: #fff; border: none; border-radius: 25px; font-size: 16px; font-weight: 700; cursor: pointer; }
+        button:hover { background: #cc0000; }
+        .back { color: #888; text-decoration: none; font-size: 14px; display: block; text-align: center; margin-top: 15px; }
+    </style>
+</head>
+<body>
+    <div class="form-card">
+        <h2>📰 Жаңалық қосу</h2>
+        <form method="POST">
+            <input type="text" name="title" placeholder="Тақырыбы" required>
+            <textarea name="content" placeholder="Мәтіні" required></textarea>
+            <select name="category">
+                <option value="league">Лига</option>
+                <option value="transfer">Трансфер</option>
+                <option value="players">Ойыншылар</option>
+                <option value="general">Жалпы</option>
+            </select>
+            <input type="text" name="image" placeholder="Сурет URL (міндетті емес)">
+            <button type="submit">Қосу</button>
+        </form>
+        <a href="/admin" class="back">← Админ-панельге</a>
+    </div>
+</body>
+</html>

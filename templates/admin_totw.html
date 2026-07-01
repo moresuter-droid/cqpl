@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <link rel="manifest" href="/static/manifest.json">
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/static/sw.js");}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Команда тура - Админ - CQPL</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial; background: #0a0e17; color: #fff; }
+        .header { background: linear-gradient(135deg, #1a0000, #2a0000); padding: 15px; text-align: center; border-bottom: 4px solid #e63946; }
+        .header h1 { font-size: 18px; color: #e63946; }
+        .header a { color: #aaa; text-decoration: none; font-size: 13px; }
+        .container { max-width: 700px; margin: 0 auto; padding: 15px; }
+        .card { background: #111827; border-radius: 12px; border: 1px solid #1f2937; padding: 20px; margin-bottom: 15px; }
+        .card h3 { color: #ffd700; margin-bottom: 15px; }
+        .form-row { margin-bottom: 10px; }
+        label { display: block; font-size: 13px; color: #888; margin-bottom: 3px; }
+        select { width: 100%; padding: 10px; background: #0a0e17; border: 1px solid #1f2937; color: #fff; border-radius: 8px; font-size: 14px; }
+        button { width: 100%; padding: 12px; background: #e63946; color: #fff; border: none; border-radius: 25px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 10px; }
+        button:hover { background: #cc0000; }
+        .pitch-preview { background: #1a3a1a; border-radius: 10px; padding: 15px; margin: 15px 0; text-align: center; }
+        .info { color: #888; font-size: 13px; }
+        .existing { color: #ffd700; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>⭐ Команда тура</h1>
+        <a href="/admin">← Админ-панельге</a>
+    </div>
+    <div class="container">
+        {% if existing_rounds|length > 0 %}
+        <div class="card">
+            <h3>Бар командалар</h3>
+            {% for r in existing_rounds %}
+            <span class="existing">{{ r.round }}-тур </span>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <div class="card">
+            <h3>Жаңа команда құрастыру</h3>
+            <p class="info">Схема: 4-3-3. Әр турға бір команда. Қайта сақтасаңыз, ескісі өшеді.</p>
+            
+            <form method="POST">
+                <div class="form-row">
+                    <label>Тур номері</label>
+                    <select name="round">
+                        {% for i in range(1, 10) %}
+                        <option value="{{ i }}">{{ i }}-тур</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="pitch-preview">
+                    <p style="color:#ffd700;font-weight:700;">Құрама (4-3-3)</p>
+                </div>
+                
+                <div class="form-row"><label>Вратарь (GK)</label><select name="gk" required><option value="">Таңда...</option>{% for p in players %}<option value="{{ p.id }}">{{ p.name }} (#{{ p.number }}) - {{ p.team_name }}</option>{% endfor %}</select></div>
+                <div class="form-row"><label>Қорғаушы 1 (DF)</label><select name="df1" required><option value="">Таңда...</option>{% for p in players %}<option value="{{ p.id }}">{{ p.name }} (#{{ p.number }}) - {{ p.team_name }}</option>{% endfor %}</select></div>
+                <div class="form-row"><label>Қорғаушы 2 (DF)</label><select name="df2" required><option value="">Таңда...</option>{% for p in players %}<option value="{{ p.id }}">{{ p.name }} (#{{ p.number }}) - {{ p.team_name }}</option>{% endfor %}</select></div>
+                <div class="form-row"><label>Қорғаушы 3 (DF)</label><select name="df3" required><option value="">Таңда...</option>{% for p in players %}<option value="{{ p.id }}">{{ p.name }} (#{{ p.number }}) - {{ p.team_name }}</option>{% endfor %}</select></div>
+                <div class="form-row"><label>Қорғаушы 4 (DF)</label><select name="df4" required><option value="">Таңда...</option>{% for p in players %}<option value="{{ p.id }}">{{ p.name }} (#{{ p.number }}) - {{ p.team_name }}</option>{% endfor %}</select></div>
+                <div class="form-row"><label>Жартылай қорғаушы 1 (MF)</label><select name="mf1" required><option value="">Таңда...</option>{% for p in players %}<option value="{{ p.id }}">{{ p.name }} (#{{ p.number }}) - {{ p.team_name }}</option>{% endfor %}</select></div>
+                <div class="form-row"><label>Жартылай қорғаушы 2 (MF)</label><select name="mf2" required><option value="">Таңда...</option>{% for p in players %}<option value="{{ p.id }}">{{ p.name }} (#{{ p.number }}) - {{ p.team_name }}</option>{% endfor %}</select></div>
+                <div class="form-row"><label>Жартылай қорғаушы 3 (MF)</label><select name="mf3" required><option value="">Таңда...</option>{% for p in players %}<option value="{{ p.id }}">{{ p.name }} (#{{ p.number }}) - {{ p.team_name }}</option>{% endfor %}</select></div>
+                <div class="form-row"><label>Шабуылшы 1 (FW)</label><select name="fw1" required><option value="">Таңда...</option>{% for p in players %}<option value="{{ p.id }}">{{ p.name }} (#{{ p.number }}) - {{ p.team_name }}</option>{% endfor %}</select></div>
+                <div class="form-row"><label>Шабуылшы 2 (FW)</label><select name="fw2" required><option value="">Таңда...</option>{% for p in players %}<option value="{{ p.id }}">{{ p.name }} (#{{ p.number }}) - {{ p.team_name }}</option>{% endfor %}</select></div>
+                <div class="form-row"><label>Шабуылшы 3 (FW)</label><select name="fw3" required><option value="">Таңда...</option>{% for p in players %}<option value="{{ p.id }}">{{ p.name }} (#{{ p.number }}) - {{ p.team_name }}</option>{% endfor %}</select></div>
+                
+                <button type="submit">💾 Сақтау</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

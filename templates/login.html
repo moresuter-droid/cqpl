@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <link rel="manifest" href="/static/manifest.json">
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/static/sw.js");}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ - CQPL</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial; background: #0a0e17; color: #fff; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        .login-card { background: #111827; border-radius: 16px; padding: 30px; border: 1px solid #1f2937; width: 90%; max-width: 400px; text-align: center; }
+        .login-card h2 { color: #e63946; margin-bottom: 20px; }
+        input { width: 100%; padding: 12px; margin-bottom: 12px; background: #0a0e17; border: 2px solid #1f2937; color: #fff; border-radius: 8px; font-size: 16px; }
+        input:focus { border-color: #e63946; outline: none; }
+        button { width: 100%; padding: 12px; background: #e63946; color: #fff; border: none; border-radius: 25px; font-size: 16px; font-weight: 700; cursor: pointer; }
+        button:hover { background: #cc0000; }
+        .error { color: #ff4444; font-size: 14px; margin-bottom: 10px; }
+        .back { color: #888; text-decoration: none; font-size: 14px; display: block; margin-top: 15px; }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <h2>🔐 Админ</h2>
+        {% if error %}<p class="error">{{ error }}</p>{% endif %}
+        <form method="POST">
+            <input type="text" name="username" placeholder="Логин" required>
+            <input type="password" name="password" placeholder="Пароль" required>
+            <button type="submit">Кіру</button>
+        </form>
+        <a href="/" class="back">← На главную</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Карточкалар - CQPL</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial; background: #0a0e17; color: #fff; }
+        .header { background: linear-gradient(135deg, #0d1b2a, #1b2838); padding: 20px; text-align: center; border-bottom: 4px solid #ff4444; }
+        .header h1 { font-size: 22px; } .header a { color: #ff4444; text-decoration: none; font-size: 14px; }
+        .nav { display: flex; justify-content: center; gap: 8px; padding: 12px; background: #111827; flex-wrap: wrap; }
+        .nav a { color: #aaa; text-decoration: none; padding: 10px 18px; border-radius: 25px; font-size: 14px; font-weight: 600; }
+        .nav a:hover, .nav a.active { background: #ff4444; color: #fff; }
+        .container { max-width: 600px; margin: 0 auto; padding: 15px; }
+        .card { background: #111827; border-radius: 12px; border: 1px solid #1f2937; overflow: hidden; }
+        .card-header { background: linear-gradient(90deg, #1a0000, #111827); padding: 15px 20px; font-weight: 700; }
+        table { width: 100%; border-collapse: collapse; }
+        thead th { background: #0a0e17; color: #888; padding: 12px 8px; font-size: 11px; text-transform: uppercase; }
+        tbody td { padding: 10px 8px; text-align: center; font-size: 14px; border-bottom: 1px solid #1a1f2e; }
+        tbody tr:hover td { background: #1a1f2e; }
+        .player-name { text-align: left; font-weight: 600; }
+        .player-name a { color: #fff; text-decoration: none; }
+        .player-name a:hover { color: #ff4444; }
+        .yellow { color: #ffcc00; font-weight: 700; }
+        .red { color: #ff4444; font-weight: 700; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🟡🔴 Карточкалар</h1>
+        <a href="/">← На главную</a>
+    </div>
+    <div class="nav">
+        <a href="/">Кесте</a>
+        <a href="/calendar">Календарь</a>
+        <a href="/scorers">Бомбардирлер</a>
+        <a href="/assists">Ассистенттер</a>
+        <a href="/cards" class="active">Карточкалар</a>
+        <a href="/news">Жаңалықтар</a>
+        <a href="/team-of-week">Команда тура</a>
+    </div>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">🟡 Сары және 🔴 қызыл карточкалар</div>
+            <table>
+                <thead><tr><th>#</th><th>Ойыншы</th><th>Команда</th><th>🟡</th><th>🔴</th></tr></thead>
+                <tbody>
+                    {% for p in players %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td class="player-name"><a href="/player/{{ p.id }}">{{ p.name }}</a></td>
+                        <td style="color:#aaa;">{{ p.team_name }}</td>
+                        <td class="yellow">{{ p.yellow_cards }}</td>
+                        <td class="red">{{ p.red_cards }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

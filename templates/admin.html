@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <link rel="manifest" href="/static/manifest.json">
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/static/sw.js");}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель - CQPL</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial; background: #0a0e17; color: #fff; }
+        .header { background: linear-gradient(135deg, #1a0000, #2a0000); padding: 20px; text-align: center; border-bottom: 4px solid #e63946; }
+        .header h1 { font-size: 20px; color: #e63946; }
+        .header a { color: #aaa; text-decoration: none; font-size: 14px; }
+        .container { max-width: 900px; margin: 0 auto; padding: 15px; }
+        .card { background: #111827; border-radius: 12px; border: 1px solid #1f2937; overflow: hidden; margin-bottom: 15px; }
+        .card-header { background: #1a0000; padding: 15px 20px; font-weight: 700; color: #e63946; display: flex; align-items: center; gap: 10px; }
+        .card-header a { color: #fff; background: #e63946; padding: 6px 14px; border-radius: 15px; text-decoration: none; font-size: 12px; margin-left: auto; }
+        .match-row { display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid #1a1f2e; gap: 10px; font-size: 13px; }
+        .match-row:last-child { border-bottom: none; }
+        .btn { background: #e63946; color: #fff; padding: 6px 14px; border-radius: 15px; text-decoration: none; font-size: 12px; font-weight: 600; white-space: nowrap; }
+        .btn-done { background: #00ff88; color: #000; }
+        .score { font-weight: 700; margin: 0 5px; color: #ffd700; }
+        .news-admin-row { display: flex; align-items: center; padding: 10px 15px; border-bottom: 1px solid #1a1f2e; gap: 10px; font-size: 13px; }
+        .news-admin-row:last-child { border-bottom: none; }
+        .btn-del { background: #333; color: #e63946; padding: 4px 10px; border-radius: 10px; text-decoration: none; font-size: 11px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>⚙️ Админ-панель</h1>
+        <a href="/logout">Шығу</a> | <a href="/">Сайтқа</a>
+    </div>
+    <div class="container">
+        <!-- Матчи -->
+        <div class="card">
+            <div class="card-header">📋 Матчтар ({{ matches|length }})</div>
+            {% for match in matches %}
+            <div class="match-row">
+                <span style="color:#888;min-width:70px;">{{ match.match_date }}</span>
+                <span style="min-width:30px;color:#888;">Т{{ match.round }}</span>
+                <span style="flex:1;">{{ match.home_name }}</span>
+                {% if match.status == 'finished' %}
+                <span class="score">{{ match.home_score }}:{{ match.away_score }}</span>
+                {% else %}
+                <span style="color:#555;">vs</span>
+                {% endif %}
+                <span style="flex:1;text-align:right;">{{ match.away_name }}</span>
+                <a href="/match/{{ match.id }}" class="btn {% if match.status == 'finished' %}btn-done{% endif %}">
+                    {% if match.status == 'finished' %}Өзгерту{% else %}Нәтиже{% endif %}
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Новости -->
+        <div class="card">
+            <div class="card-header">📰 Жаңалықтар <a href="/admin/news/add">+ Қосу</a></div>
+            {% for n in news %}
+            <div class="news-admin-row">
+                <span style="color:#888;min-width:70px;">{{ n.created_date }}</span>
+                <span style="flex:1;">{{ n.title[:50] }}{% if n.title|length > 50 %}...{% endif %}</span>
+                <a href="/admin/news/delete/{{ n.id }}" class="btn-del" onclick="return confirm('Жою?')">Өшіру</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

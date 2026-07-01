@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <link rel="manifest" href="/static/manifest.json">
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("/static/sw.js");}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Матч - CQPL</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial; background: #0a0e17; color: #fff; }
+        .header { background: linear-gradient(135deg, #1a0000, #2a0000); padding: 15px; text-align: center; border-bottom: 4px solid #e63946; }
+        .header h1 { font-size: 18px; color: #e63946; }
+        .header a { color: #aaa; text-decoration: none; font-size: 13px; }
+        .container { max-width: 700px; margin: 0 auto; padding: 15px; }
+        .card { background: #111827; border-radius: 12px; border: 1px solid #1f2937; overflow: hidden; margin-bottom: 15px; }
+        .card-header { background: #1a0000; padding: 12px 20px; font-weight: 700; color: #e63946; }
+        .score-section { display: flex; align-items: center; justify-content: center; gap: 15px; padding: 20px; }
+        .score-section input { width: 55px; height: 45px; text-align: center; font-size: 22px; font-weight: 700; background: #0a0e17; border: 2px solid #1f2937; color: #fff; border-radius: 8px; }
+        .score-section span { font-size: 18px; font-weight: 700; }
+        .btn { background: #e63946; color: #fff; padding: 8px 18px; border-radius: 20px; border: none; cursor: pointer; font-weight: 600; font-size: 13px; }
+        .btn:hover { background: #cc0000; }
+        .btn-sm { padding: 4px 10px; font-size: 11px; border-radius: 12px; }
+        .btn-green { background: #00ff88; color: #000; }
+        .btn-green:hover { background: #00cc66; }
+        .event-form { display: flex; gap: 8px; padding: 10px 20px; flex-wrap: wrap; align-items: center; border-bottom: 1px solid #1a1f2e; }
+        .event-form select, .event-form input { background: #0a0e17; border: 1px solid #1f2937; color: #fff; padding: 6px 10px; border-radius: 6px; font-size: 12px; }
+        .event-row { display: flex; align-items: center; padding: 8px 20px; border-bottom: 1px solid #1a1f2e; gap: 8px; font-size: 13px; }
+        .event-row:last-child { border-bottom: none; }
+        .del-btn { background: none; border: none; color: #e63946; cursor: pointer; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>⚽ {{ match.round }}-тур | {{ match.match_date }}</h1>
+        <a href="/admin">← Админ-панельге</a>
+    </div>
+    <div class="container">
+        <!-- Счёт -->
+        <div class="card">
+            <div class="card-header">Нәтиже</div>
+            <form method="POST">
+                <div class="score-section">
+                    <span>{{ match.home_name }}</span>
+                    <input type="number" name="home_score" value="{{ match.home_score }}" min="0" max="20">
+                    <span>:</span>
+                    <input type="number" name="away_score" value="{{ match.away_score }}" min="0" max="20">
+                    <span>{{ match.away_name }}</span>
+                </div>
+                <div style="text-align:center;padding-bottom:15px;">
+                    <input type="hidden" name="action" value="update_score">
+                    <button type="submit" class="btn">Счётты сақтау</button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- События -->
+        {% if match.status == 'finished' %}
+        <div class="card">
+            <div class="card-header">Оқиғалар</div>
+            
+            <!-- Существующие события -->
+            {% for ev in events %}
+            <div class="event-row">
+                <span style="min-width:30px;color:#ffd700;">{{ ev.minute }}'</span>
+                <span>
+                    {% if ev.event_type == 'goal' %}⚽ Гол
+                    {% elif ev.event_type == 'yellow' %}🟡 Сары
+                    {% elif ev.event_type == 'red' %}🔴 Қызыл
+                    {% endif %}
+                </span>
+                <span style="font-weight:600;">{{ ev.player_name }} ({{ ev.player_number }})</span>
+                <span style="flex:1;"></span>
+                <form method="POST" style="display:inline;">
+                    <input type="hidden" name="action" value="delete_event">
+                    <input type="hidden" name="event_id" value="{{ ev.id }}">
+                    <button type="submit" class="del-btn" onclick="return confirm('Өшіру?')">✕</button>
+                </form>
+            </div>
+            {% endfor %}
+            {% if events|length == 0 %}
+            <div style="padding:15px;color:#888;text-align:center;">Оқиғалар жоқ</div>
+            {% endif %}
+            
+            <!-- Добавить событие -->
+            <div style="padding:15px 20px;background:#0d1b2a;">
+                <form method="POST" class="event-form">
+                    <input type="hidden" name="action" value="add_event">
+                    <select name="event_type">
+                        <option value="goal">⚽ Гол</option>
+                        <option value="yellow">🟡 Сары</option>
+                        <option value="red">🔴 Қызыл</option>
+                    </select>
+                    <select name="team_id">
+                        <option value="{{ match.home_team_id }}">{{ match.home_name }}</option>
+                        <option value="{{ match.away_team_id }}">{{ match.away_name }}</option>
+                    </select>
+                    <select name="player_id" id="player_select">
+                        <option value="">Ойыншыны таңда...</option>
+                    </select>
+                    <select name="assist_id" id="assist_select">
+                        <option value="">Ассистент (гол үшін)</option>
+                    </select>
+                    <input type="number" name="minute" placeholder="Минут" min="1" max="120" required style="width:65px;">
+                    <button type="submit" class="btn btn-sm">+ Қосу</button>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <script>
+        const homePlayers = [{% for p in home_players %}{id:{{ p.id }}, name:'{{ p.name }}', number:{{ p.number }}, team:{{ match.home_team_id }}}{% if not loop.last %},{% endif %}{% endfor %}];
+        const awayPlayers = [{% for p in away_players %}{id:{{ p.id }}, name:'{{ p.name }}', number:{{ p.number }}, team:{{ match.away_team_id }}}{% if not loop.last %},{% endif %}{% endfor %}];
+        const allPlayers = [...homePlayers, ...awayPlayers];
+        
+        function updatePlayers() {
+            const teamSelect = document.querySelector('select[name="team_id"]');
+            const playerSelect = document.getElementById('player_select');
+            const assistSelect = document.getElementById('assist_select');
+            const selectedTeam = parseInt(teamSelect.value);
+            
+            playerSelect.innerHTML = '<option value="">Ойыншыны таңда...</option>';
+            assistSelect.innerHTML = '<option value="">Ассистент (гол үшін)</option>';
+            
+            allPlayers.forEach(p => {
+                if (p.team === selectedTeam) {
+                    const opt = document.createElement('option');
+                    opt.value = p.id;
+                    opt.textContent = `${p.name} (#${p.number})`;
+                    playerSelect.appendChild(opt);
+                    
+                    const opt2 = document.createElement('option');
+                    opt2.value = p.id;
+                    opt2.textContent = `${p.name} (#${p.number})`;
+                    assistSelect.appendChild(opt2);
+                }
+            });
+        }
+        
+        document.querySelector('select[name="team_id"]').addEventListener('change', updatePlayers);
+        updatePlayers();
+    </script>
+</body>
+</html>

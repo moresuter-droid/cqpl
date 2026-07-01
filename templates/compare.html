@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <title>Командаларды салыстыру - CQPL</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap');
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Montserrat',sans-serif; background:#020510; color:#f0f0f5; }
+        .header { background:linear-gradient(180deg,rgba(10,20,50,0.95),rgba(5,10,30,0.95)); padding:20px; text-align:center; border-bottom:2px solid rgba(26,86,255,0.3); }
+        .header a { color:#1a56ff; text-decoration:none; }
+        .container { max-width:800px; margin:0 auto; padding:20px; }
+        select { width:100%; padding:12px; background:#111827; border:1px solid #1f2937; color:#fff; border-radius:8px; margin-bottom:10px; font-size:14px; }
+        .vs-card { background:rgba(12,16,30,0.85); border-radius:16px; padding:20px; text-align:center; border:1px solid rgba(255,255,255,0.04); }
+        .vs-score { font-size:48px; font-weight:900; color:#f0b90b; }
+        .stat-row { display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.02); }
+        .bar-wrap { height:6px; background:rgba(255,255,255,0.05); border-radius:3px; flex:1; margin:0 10px; }
+        .bar { height:100%; border-radius:3px; }
+        .bar.blue { background:#1a56ff; }
+        .bar.gold { background:#f0b90b; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>⚔️ Командаларды салыстыру</h1>
+        <a href="/">← Басты бетке</a>
+    </div>
+    <div class="container">
+        <form method="GET" action="/compare">
+            <select name="team1">
+                <option value="">1-ші команда</option>
+                {% for t in teams %}<option value="{{ t.id }}">{{ t.name }}</option>{% endfor %}
+            </select>
+            <select name="team2">
+                <option value="">2-ші команда</option>
+                {% for t in teams %}<option value="{{ t.id }}">{{ t.name }}</option>{% endfor %}
+            </select>
+            <button type="submit" style="width:100%;padding:12px;background:#1a56ff;color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;">Салыстыру</button>
+        </form>
+        
+        {% if t1 and t2 %}
+        <div class="vs-card" style="margin-top:20px;">
+            <div style="display:flex;justify-content:center;align-items:center;gap:20px;font-size:20px;font-weight:700;margin-bottom:15px;">
+                <span>{{ t1.name }}</span><span style="color:#f0b90b;">VS</span><span>{{ t2.name }}</span>
+            </div>
+            <div class="stat-row"><span>Ойын</span><span>{{ t1.games }}</span><div class="bar-wrap"></div><span>{{ t2.games }}</span></div>
+            <div class="stat-row"><span>Ұпай</span><span style="color:#1a56ff;font-weight:700;">{{ t1.points }}</span><div class="bar-wrap"><div class="bar blue" style="width:{{ (t1.points/(t1.points+t2.points+0.1))*100 }}%;"></div></div><span style="color:#1a56ff;font-weight:700;">{{ t2.points }}</span></div>
+            <div class="stat-row"><span>Гол</span><span>{{ t1.goals_for }}:{{ t1.goals_against }}</span><div class="bar-wrap"></div><span>{{ t2.goals_for }}:{{ t2.goals_against }}</span></div>
+            <div class="stat-row"><span>Жеңіс</span><span>{{ t1.wins }}</span><div class="bar-wrap"><div class="bar gold" style="width:{{ (t1.wins/(t1.wins+t2.wins+0.1))*100 }}%;"></div></div><span>{{ t2.wins }}</span></div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

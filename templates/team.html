@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ team.name }} - CQPL</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Montserrat', sans-serif; background: #020510; color: #f0f0f5; }
+        .header { background: linear-gradient(180deg, rgba(10,20,50,0.95), rgba(5,10,30,0.95)); padding: 30px 20px; text-align: center; border-bottom: 2px solid rgba(26,86,255,0.3); }
+        .header .logo { width: 80px; height: 80px; border-radius: 50%; border: 3px solid rgba(255,255,255,0.2); margin-bottom: 15px; }
+        .header h1 { font-size: 28px; font-weight: 900; }
+        .header a { color: #1a56ff; text-decoration: none; font-size: 13px; font-weight: 600; }
+        .nav { display: flex; justify-content: center; gap: 4px; padding: 12px; background: rgba(0,0,0,0.5); flex-wrap: wrap; }
+        .nav a { color: #7e8299; text-decoration: none; padding: 10px 16px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+        .nav a:hover { color: #fff; background: rgba(255,255,255,0.04); }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+        @media (max-width: 500px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+        .stat-box { background: rgba(12,16,30,0.85); border-radius: 14px; padding: 16px; text-align: center; border: 1px solid rgba(255,255,255,0.04); }
+        .stat-box .val { font-size: 24px; font-weight: 900; color: #1a56ff; }
+        .stat-box .lbl { font-size: 10px; color: #7e8299; font-weight: 600; letter-spacing: 1px; margin-top: 4px; }
+        
+        .form-dots { display: flex; gap: 4px; justify-content: center; margin-top: 6px; }
+        .form-dot { width: 20px; height: 20px; border-radius: 5px; font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+        .form-W { background: #00d68f; color: #000; } .form-D { background: #f0b90b; color: #000; } .form-L { background: #ff2d55; color: #fff; }
+        
+        .card { background: rgba(12,16,30,0.85); border-radius: 16px; border: 1px solid rgba(255,255,255,0.04); overflow: hidden; margin-bottom: 16px; }
+        .card-head { padding: 16px 20px; font-weight: 700; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.04); display: flex; gap: 8px; align-items: center; }
+        .tabs { display: flex; }
+        .tab { padding: 10px 20px; cursor: pointer; font-weight: 600; font-size: 12px; color: #7e8299; border-bottom: 2px solid transparent; transition: all 0.3s; }
+        .tab.active { color: #1a56ff; border-bottom-color: #1a56ff; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th { color: #7e8299; font-size: 10px; font-weight: 700; letter-spacing: 1px; padding: 12px 8px; text-align: center; text-transform: uppercase; }
+        td { padding: 10px 8px; text-align: center; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.02); }
+        tr:hover td { background: rgba(26,86,255,0.04); }
+        .pl-name { text-align: left; } .pl-name a { color: #fff; text-decoration: none; font-weight: 600; }
+        .pl-name a:hover { color: #1a56ff; }
+        .goals { color: #f0b90b; font-weight: 700; }
+        
+        .match-row { display: flex; align-items: center; padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.02); gap: 10px; font-size: 13px; }
+        .match-row:last-child { border-bottom: none; }
+        .match-score { font-weight: 700; color: #1a56ff; }
+        .badge { padding: 3px 8px; border-radius: 4px; font-weight: 700; font-size: 10px; }
+        .badge-w { background: #00d68f; color: #000; } .badge-d { background: #f0b90b; color: #000; } .badge-l { background: #ff2d55; color: #fff; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="/static/logos/{{ team.name }}.png" class="logo" onerror="this.style.display='none'">
+        <h1>{{ team.name }}</h1>
+        <a href="/">← Басты бетке</a>
+    </div>
+    <div class="nav">
+        <a href="/">Кесте</a><a href="/calendar">Календарь</a><a href="/scorers">Бомбардирлер</a><a href="/assists">Ассистенттер</a><a href="/cards">Карточкалар</a><a href="/transfers">Трансферлер</a><a href="/news">Жаңалықтар</a>
+    </div>
+    
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-box"><div class="val">{{ team.games }}</div><div class="lbl">Матчтар</div></div>
+            <div class="stat-box"><div class="val">{{ team.wins }}</div><div class="lbl">Жеңіс</div></div>
+            <div class="stat-box"><div class="val">{{ team.draws }}</div><div class="lbl">Тең</div></div>
+            <div class="stat-box"><div class="val">{{ team.losses }}</div><div class="lbl">Жеңіліс</div></div>
+            <div class="stat-box"><div class="val">{{ team.goals_for }}:{{ team.goals_against }}</div><div class="lbl">Доптар</div></div>
+            <div class="stat-box"><div class="val">{{ team.points }}</div><div class="lbl">Ұпай</div></div>
+            <div class="stat-box">
+                <div class="val">{% if team.games>0 %}{{ "%.1f"|format(team.points/team.games) }}{% else %}0{% endif %}</div>
+                <div class="lbl">Орта ұпай</div>
+            </div>
+            <div class="stat-box">
+                <div class="lbl">Форма</div>
+                <div class="form-dots">
+                    {% for f in form %}<span class="form-dot form-{{ f }}">{{ f }}</span>{% endfor %}
+                    {% if form|length==0 %}<span style="color:#7e8299;font-size:11px;">—</span>{% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="tabs">
+                <div class="tab active" onclick="showTab('matches')">Матчтар</div>
+                <div class="tab" onclick="showTab('players')">Құрамы ({{ players|length }})</div>
+            </div>
+            
+            <div id="tab-matches" class="tab-content active">
+                {% for m in matches %}
+                <div class="match-row">
+                    <span style="color:#7e8299;font-size:11px;">{{ m.match_date }}</span>
+                    <span style="color:#7e8299;font-size:11px;">Т{{ m.round }}</span>
+                    <span style="flex:1;text-align:right;">{{ m.home_name }}</span>
+                    <a href="/match-report/{{ m.id }}" style="text-decoration:none;"><span class="match-score">{{ m.home_score }}:{{ m.away_score }}</span></a>
+                    <span style="flex:1;">{{ m.away_name }}</span>
+                    {% set is_home = m.home_team_id == team.id %}
+                    {% if is_home %}
+                        {% if m.home_score > m.away_score %}<span class="badge badge-w">W</span>
+                        {% elif m.home_score < m.away_score %}<span class="badge badge-l">L</span>
+                        {% else %}<span class="badge badge-d">D</span>{% endif %}
+                    {% else %}
+                        {% if m.away_score > m.home_score %}<span class="badge badge-w">W</span>
+                        {% elif m.away_score < m.home_score %}<span class="badge badge-l">L</span>
+                        {% else %}<span class="badge badge-d">D</span>{% endif %}
+                    {% endif %}
+                </div>
+                {% endfor %}
+                {% if matches|length == 0 %}<div class="match-row" style="color:#7e8299;">Матчтар әлі жоқ</div>{% endif %}
+            </div>
+            
+            <div id="tab-players" class="tab-content">
+                <table>
+                    <thead><tr><th>№</th><th>Аты</th><th>Позиция</th><th>⚽</th><th>🎯</th><th>🟡</th><th>🔴</th></tr></thead>
+                    <tbody>
+                        {% for p in players %}
+                        <tr>
+                            <td>{{ p.number }}</td>
+                            <td class="pl-name"><a href="/player/{{ p.id }}">{{ p.name }}</a></td>
+                            <td style="color:#7e8299;font-size:12px;">{{ p.position }}</td>
+                            <td class="goals">{{ p.goals }}</td>
+                            <td>{{ p.assists }}</td>
+                            <td>{{ p.yellow_cards }}</td>
+                            <td style="color:#ff2d55;">{{ p.red_cards }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function showTab(name) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('tab-'+name).classList.add('active');
+        }
+    </script>
+</body>
+</html>
