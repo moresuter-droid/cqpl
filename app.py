@@ -424,6 +424,5 @@ def admin_totw():
     
     db.close()
     return render_template('admin_totw.html', players=players, existing_rounds=existing_rounds)
-
 if __name__ == '__main__':
     app.run()
